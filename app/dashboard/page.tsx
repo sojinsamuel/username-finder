@@ -16,14 +16,18 @@ import {
 import { subtitle, title } from "@/components/primitives";
 import AddCheck from "@/components/add-check";
 import { useRouter } from "next/navigation";
-import { Hanko } from "@teamhanko/hanko-elements";
+import { Hanko } from "@teamhanko/hanko-frontend-sdk";
 import timeAgo from "@/utils/time";
 import CardMock from "@/components/CardMock";
 import NoChecksYet from "@/components/NoChecksYet";
 // import { hankoStore } from "@/store/hanko";
 
-const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
-const hanko = new Hanko(hankoApi);
+let hanko: Hanko;
+
+if (typeof window !== "undefined") {
+  const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
+  (window as any).hanko = new Hanko(hankoApi);
+}
 
 function AvailabilityCard(props: any) {
   const { availables } = props;

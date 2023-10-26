@@ -3,12 +3,16 @@
 
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { Hanko } from "@teamhanko/hanko-elements";
+import { Hanko } from "@teamhanko/hanko-frontend-sdk";
 import { title } from "@/components/primitives";
 import { Progress } from "@nextui-org/react";
 
-const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
-const hanko = new Hanko(hankoApi);
+let hanko: Hanko;
+
+if (typeof window !== "undefined") {
+  const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
+  (window as any).hanko = new Hanko(hankoApi);
+}
 
 function AuthCallBackPage() {
   const router = useRouter();
