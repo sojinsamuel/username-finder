@@ -16,7 +16,7 @@ import {
 import { subtitle, title } from "@/components/primitives";
 import AddCheck from "@/components/add-check";
 import { useRouter } from "next/navigation";
-import { Hanko } from "@teamhanko/hanko-elements";
+// import { Hanko } from "@teamhanko/hanko-elements";
 import timeAgo from "@/utils/time";
 import CardMock from "@/components/CardMock";
 import NoChecksYet from "@/components/NoChecksYet";
