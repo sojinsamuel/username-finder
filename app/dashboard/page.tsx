@@ -16,13 +16,14 @@ import {
 import { subtitle, title } from "@/components/primitives";
 import AddCheck from "@/components/add-check";
 import { useRouter } from "next/navigation";
-// import { Hanko } from "@teamhanko/hanko-elements";
+import { Hanko } from "@teamhanko/hanko-elements";
 import timeAgo from "@/utils/time";
 import CardMock from "@/components/CardMock";
 import NoChecksYet from "@/components/NoChecksYet";
 // import { hankoStore } from "@/store/hanko";
 
 const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
+const hanko = new Hanko(hankoApi);
 
 function AvailabilityCard(props: any) {
   const { availables } = props;
@@ -68,16 +69,6 @@ export default function Dashboard() {
   const [userId, setUserId] = useState("");
   const [usernameStats, setUsernameStats] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const [hanko, setHanko] = useState<any>(null);
-  const [firstUseEffect, setFirstUseEffect] = useState(false);
-  const [secondUseEffect, setSecondUseEffect] = useState(false);
-
-  useEffect(() => {
-    import("@teamhanko/hanko-elements").then(({ Hanko }) =>
-      setHanko(new Hanko(hankoApi))
-    );
-    setFirstUseEffect(true);
-  }, []);
 
   const router = useRouter();
   async function getCurrentUser() {
@@ -95,7 +86,6 @@ export default function Dashboard() {
     });
 
     const dbUser = await res.json();
-    setSecondUseEffect(true);
     if (!dbUser) {
       router.push("/auth-callback?origin=dashboard");
     }
@@ -103,10 +93,8 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (firstUseEffect) {
-      getCurrentUser();
-    }
-  }, [firstUseEffect]);
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     async function getChecks() {
@@ -131,10 +119,8 @@ export default function Dashboard() {
         setLoading(false);
       }
     }
-    if (secondUseEffect) {
-      getChecks();
-    }
-  }, [secondUseEffect]);
+    getChecks();
+  }, []);
 
   return (
     <div className="flex items-center justify-center">

@@ -2,25 +2,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Hanko } from "@teamhanko/hanko-elements";
 import { title } from "@/components/primitives";
 import { Progress } from "@nextui-org/react";
 
 const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
+const hanko = new Hanko(hankoApi);
 
 function AuthCallBackPage() {
-  const [hanko, setHanko] = useState<Hanko>();
-  const [firstUseEffect, setFirstUseEffect] = useState(false);
-
   const router = useRouter();
-
-  useEffect(() => {
-    import("@teamhanko/hanko-elements").then(({ Hanko }) =>
-      setHanko(new Hanko(hankoApi))
-    );
-    setFirstUseEffect(true);
-  }, []);
 
   async function getCurrentUser() {
     try {
@@ -54,10 +45,8 @@ function AuthCallBackPage() {
   }
 
   useEffect(() => {
-    if (firstUseEffect) {
-      getCurrentUser();
-    }
-  }, [firstUseEffect]);
+    getCurrentUser();
+  }, []);
 
   return (
     <div className="flex min-h-screen w-screen items-center justify-center">
