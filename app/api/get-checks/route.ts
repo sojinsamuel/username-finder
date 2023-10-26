@@ -2,13 +2,11 @@ import { db } from "@/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+  const { id } = await req.json();
+  console.log("====================================");
+  console.log({ id });
+  console.log("====================================");
   try {
-    const { id } = await req.json();
-
-    console.log("====================================");
-    console.log({ id });
-    console.log("====================================");
-
     const dbUser = await db.username.findMany({
       where: {
         userId: id,

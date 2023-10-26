@@ -1,4 +1,4 @@
-export function timeAgo(timestamp: any) {
+export default function timeAgo(timestamp: any) {
   const currentTimestamp: any = new Date();
   const pastTimestamp: any = new Date(String(timestamp));
 

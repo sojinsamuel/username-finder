@@ -23,7 +23,6 @@ model Username {
   snapchat  Boolean?  @default(false)
   facebook  Boolean?  @default(false)
   youtube   Boolean?  @default(false)
-  available Boolean?  @default(false)
   lastCheck DateTime? @default(now())
   userId    String
   details   User      @relation(fields: [userId], references: [id])

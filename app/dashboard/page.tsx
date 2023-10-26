@@ -17,18 +17,15 @@ import { subtitle, title } from "@/components/primitives";
 import AddCheck from "@/components/add-check";
 import { useRouter } from "next/navigation";
 import { Hanko } from "@teamhanko/hanko-elements";
-import { timeAgo } from "@/utils/time";
+import timeAgo from "@/utils/time";
 import CardMock from "@/components/CardMock";
 import NoChecksYet from "@/components/NoChecksYet";
+// import { hankoStore } from "@/store/hanko";
 
 const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
-const hanko = new Hanko(hankoApi);
 
 function AvailabilityCard(props: any) {
-  const { availables, username } = props;
-  console.log("====================================");
-  console.log(availables, username);
-  console.log("====================================");
+  const { availables } = props;
   return (
     <>
       <h1 className={`${subtitle()} `}>@{props.username}</h1>
@@ -43,48 +40,24 @@ function AvailabilityCard(props: any) {
           <TableColumn>Last Checked</TableColumn>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>
-              <span className="text-gray-500">snapchat.com/</span>
-              {props.username}
-            </TableCell>
-            <TableCell
-              className={`${
-                props.available ? "text-green-700" : "text-red-700"
-              }`}
-            >
-              {props.available ? "Available" : "Unavailable"}
-            </TableCell>
-            <TableCell>{timeAgo(props.lastChecked)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <span className="text-gray-500">facebook.com/</span>
-              {props.username}
-            </TableCell>
-            <TableCell
-              className={`${
-                props.available ? "text-green-700" : "text-red-700"
-              }`}
-            >
-              {props.available ? "Available" : "Unavailable"}
-            </TableCell>
-            <TableCell>{timeAgo(props.lastChecked)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <span className="text-gray-500">youtube.com/</span>
-              {props.username}
-            </TableCell>
-            <TableCell
-              className={`${
-                props.available ? "text-green-700" : "text-red-700"
-              }`}
-            >
-              {props.available ? "Available" : "Unavailable"}
-            </TableCell>
-            <TableCell>{timeAgo(props.lastChecked)}</TableCell>
-          </TableRow>
+          {availables.map((item: any, i: number) => {
+            return (
+              <TableRow key={`${props.username}_${i}`}>
+                <TableCell>
+                  <span className="text-gray-500">{item.website}.com/</span>
+                  {props.username}
+                </TableCell>
+                <TableCell
+                  className={`${
+                    item.status === 1 ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {item.status === 1 ? "Available" : "Unavailable"}
+                </TableCell>
+                <TableCell>{timeAgo(props.lastChecked)}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </>
@@ -95,6 +68,16 @@ export default function Dashboard() {
   const [userId, setUserId] = useState("");
   const [usernameStats, setUsernameStats] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [hanko, setHanko] = useState<any>(null);
+  const [firstUseEffect, setFirstUseEffect] = useState(false);
+  const [secondUseEffect, setSecondUseEffect] = useState(false);
+
+  useEffect(() => {
+    import("@teamhanko/hanko-elements").then(({ Hanko }) =>
+      setHanko(new Hanko(hankoApi))
+    );
+    setFirstUseEffect(true);
+  }, []);
 
   const router = useRouter();
   async function getCurrentUser() {
@@ -112,9 +95,7 @@ export default function Dashboard() {
     });
 
     const dbUser = await res.json();
-    // console.log("====================================");
-    // console.log(dbUser);
-    // console.log("====================================");
+    setSecondUseEffect(true);
     if (!dbUser) {
       router.push("/auth-callback?origin=dashboard");
     }
@@ -122,8 +103,10 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    if (firstUseEffect) {
+      getCurrentUser();
+    }
+  }, [firstUseEffect]);
 
   useEffect(() => {
     async function getChecks() {
@@ -148,8 +131,10 @@ export default function Dashboard() {
         setLoading(false);
       }
     }
-    getChecks();
-  }, [userId]);
+    if (secondUseEffect) {
+      getChecks();
+    }
+  }, [secondUseEffect]);
 
   return (
     <div className="flex items-center justify-center">

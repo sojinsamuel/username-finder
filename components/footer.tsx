@@ -3,7 +3,7 @@
 import { Link } from "@nextui-org/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import InfoCard from "./profile/info-card";
+// import InfoCard from "./profile/info-card";
 import { GithubIcon } from "./icons";
 
 function Footer() {
