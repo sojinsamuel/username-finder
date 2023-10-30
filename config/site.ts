@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Available Username",
+  name: "My Usernames",
   description:
     "Find Available Social Media Username in Realtime over multiple platforms at the same time.",
   navItems: [

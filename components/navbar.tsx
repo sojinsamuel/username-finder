@@ -37,7 +37,7 @@ export const Navbar = () => {
             href="/"
           >
             <DocumentMagnifyingGlassIcon height={25} width={30} />
-            <p className="font-bold text-inherit">Available</p>
+            <p className="font-bold text-inherit">My Usernames</p>
           </NextLink>
         </NavbarBrand>
         <ul className="ml-2 hidden justify-end gap-4 lg:flex">

@@ -34,7 +34,7 @@ export default function LoginPage() {
                 <DocumentMagnifyingGlassIcon height={50} width={50} />
               }
             >
-              <p className=" font-bold ">Available</p>
+              <p className=" font-bold ">My usernames</p>
             </Link>
           </div>
           <div className=" max-w-lg items-center  text-center">
