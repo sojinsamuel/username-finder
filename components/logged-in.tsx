@@ -10,6 +10,8 @@ const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
 
 type UserDetails = { id: string; email: string };
 
+// header("Access-Control-Allow-Origin: *");
+
 function LoggedIn() {
   const router = useRouter();
   const [hanko, setHanko] = useState<Hanko>();

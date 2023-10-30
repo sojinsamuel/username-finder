@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       },
     });
     console.log("====================================");
-    // console.log({ dbUser });
+    console.log({ dbUser });
     console.log("====================================");
     return NextResponse.json(dbUser);
   } catch (error) {

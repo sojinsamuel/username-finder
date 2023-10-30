@@ -21,13 +21,8 @@ import timeAgo from "@/utils/time";
 import CardMock from "@/components/CardMock";
 import NoChecksYet from "@/components/NoChecksYet";
 // import { hankoStore } from "@/store/hanko";
-
-let hanko: Hanko;
-
-if (typeof window !== "undefined") {
-  const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
-  (window as any).hanko = new Hanko(hankoApi);
-}
+const hankoApi = process.env.NEXT_PUBLIC_HANKO_API_URL!;
+// const hanko = new Hanko(hankoApi);
 
 function AvailabilityCard(props: any) {
   const { availables } = props;
@@ -73,16 +68,35 @@ export default function Dashboard() {
   const [userId, setUserId] = useState("");
   const [usernameStats, setUsernameStats] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [hanko, setHanko] = useState<Hanko>();
+
+  useEffect(() => {
+    import("@teamhanko/hanko-frontend-sdk").then(({ Hanko }) =>
+      setHanko(new Hanko(hankoApi))
+    );
+  }, []);
 
   const router = useRouter();
-  async function getCurrentUser() {
-    const currentUser = await hanko?.user.getCurrent();
-    setUserId(currentUser?.id);
+
+  useEffect(() => {
+    async function initUserProcess() {
+      const currentUser = await hanko?.user.getCurrent();
+      await getCurrentUser(currentUser);
+      await getChecks(currentUser);
+    }
+
+    if (hanko) {
+      initUserProcess();
+    }
+  }, [hanko]);
+
+  async function getCurrentUser(user: any) {
+    setUserId(user?.id);
     const res = await fetch("/api/user-in-db", {
       method: "POST",
       body: JSON.stringify({
-        id: currentUser?.id,
-        email: currentUser?.email,
+        id: user?.id,
+        email: user?.email,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -96,35 +110,61 @@ export default function Dashboard() {
     return true;
   }
 
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  useEffect(() => {
-    async function getChecks() {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/get-checks", {
-          method: "POST",
-          body: JSON.stringify({
-            id: userId,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await res.json();
-        console.log("Fetched", { data });
-        setUsernameStats(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        console.log({ usernameStats });
-        setLoading(false);
-      }
+  // useEffect(() => {
+  //   getCurrentUser();
+  // }, []);
+  console.log("====================================");
+  console.log({ userId });
+  console.log("====================================");
+  async function getChecks(currentUser: any) {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/get-checks", {
+        method: "POST",
+        body: JSON.stringify({
+          id: currentUser?.id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log("Fetched", { data });
+      setUsernameStats(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      console.log({ usernameStats });
+      setLoading(false);
     }
-    getChecks();
-  }, []);
+  }
+  // useEffect(() => {
+  //   async function getChecks() {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch("/api/get-checks", {
+  //         method: "POST",
+  //         body: JSON.stringify({
+  //           id: userId,
+  //         }),
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       console.log("Fetched", { data });
+  //       setUsernameStats(data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       console.log({ usernameStats });
+  //       setLoading(false);
+  //     }
+  //   }
+  //   if (userId) {
+  //     getChecks();
+  //   }
+  // }, [userId]);
 
   return (
     <div className="flex items-center justify-center">
